@@ -1,55 +1,39 @@
-from flask import Flask, jsonify, request
 import numpy as np
-
-app = Flask(__name__)
-
-@app.route("/")
-def intro():
-    res = {
-        "author": "Ayush Kumar",
-        "usage": "Use "
-    }
-    return jsonify(res)
-
-
-@app.route('/image_pixels', methods=['POST'])
-def image_pixels():
-    data = request.get_json()
-    print(data)
-    if is_input_valid(data):
-        m, n = data['dimensions']
-        corner_points = data['corner_points']
-        pixels = generate_pixels(m, n, corner_points)
-        return jsonify({'solution': pixels})
-    else:
-        return jsonify({'status' : 'Invalid data'})
-
-
 
 
 def is_input_valid(data):
+    '''
+    Checks if the JSON object passed to the route valid
+    '''
     if 'dimensions' not in data or 'corner_points' not in data:
+        print('error here')
         return False
     
     # Check dimensions
     m, n = data['dimensions']
     if type(m) != int or type(n) != int:
+        print('dance')
         return False
-    if m <= 2 or n <= 2:
+    if m < 2 or n < 2:
+        print('hello')
         return False
 
     # Check corner points
     corner_points = data['corner_points']
     if len(corner_points) != 4:
+        print('nachle')
         return False
     for coordinates in corner_points:
         if len(coordinates) != 2:
+            print('yaar')
             return False
-
+    return True
     
 
-
 def determine_corner_order(corner_points):
+    '''
+    Finds the correct order of corner points: left_top, left_bottom, right_top, right_bottom
+    '''
     x = [el[0] for el in corner_points]
     y = [el[1] for el in corner_points]
 
@@ -61,7 +45,11 @@ def determine_corner_order(corner_points):
     return left_top, left_bottom, right_top, right_bottom
 
 
+
 def generate_pixels(m, n, corner_points):
+    '''
+    Generates the image pixels for m * n grid according to the specifications
+    '''
     left_top, left_bottom, right_top, right_bottom = determine_corner_order(corner_points)
     
     # Create evenly spaced X values on top and bottom row of the rectangle
@@ -76,5 +64,4 @@ def generate_pixels(m, n, corner_points):
 
     # Combine X and Y values to get grid of coordinates in the rectangle
     pixels = np.stack((all_x, all_y), axis=2)
-
     return pixels.tolist()
