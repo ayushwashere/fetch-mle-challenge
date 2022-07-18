@@ -6,26 +6,21 @@ def is_input_valid(data):
     Checks if the JSON object passed to the route valid
     '''
     if 'dimensions' not in data or 'corner_points' not in data:
-        print('error here')
         return False
     
     # Check dimensions
     m, n = data['dimensions']
     if type(m) != int or type(n) != int:
-        print('dance')
         return False
     if m < 2 or n < 2:
-        print('hello')
         return False
 
     # Check corner points
     corner_points = data['corner_points']
     if len(corner_points) != 4:
-        print('nachle')
         return False
     for coordinates in corner_points:
         if len(coordinates) != 2:
-            print('yaar')
             return False
     return True
     
